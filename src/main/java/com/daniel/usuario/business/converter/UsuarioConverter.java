@@ -1,0 +1,148 @@
+package com.daniel.usuario.business.converter;
+
+import com.daniel.usuario.business.dto.EnderecoDTO;
+import com.daniel.usuario.business.dto.TelefoneDTO;
+import com.daniel.usuario.business.dto.UsuarioDTO;
+import com.daniel.usuario.infraestructure.entity.Endereco;
+import com.daniel.usuario.infraestructure.entity.Telefone;
+import com.daniel.usuario.infraestructure.entity.Usuario;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Component
+public class UsuarioConverter {
+
+    /*************************************************************
+     * Esses métodos convertem objetoDTO para objeto
+     * Ou seja, recebem UsuarioDTO e convertem para Usuário
+     *************************************************************
+     * */
+
+    public Usuario paraUsuario(UsuarioDTO usuarioDTO) {
+        /*
+        Sem o @Builder, o conversor ficaria mais ou menos assim:
+
+        Usuario usuario = new Usuario();
+        usuario.setEmail(usuarioDTO.getEmail());
+        usuario.setNome(usuarioDTO.getNome());
+        blá blá blá...
+        */
+
+        // Com o @Builder fica assim:
+        return Usuario.builder()
+                .nome(usuarioDTO.getNome())
+                .email(usuarioDTO.getEmail())
+                .senha(usuarioDTO.getSenha())
+                .enderecos(paraListaEndereco(usuarioDTO.getEnderecos()))
+                .telefones(paraListaTelefones(usuarioDTO.getTelefones()))
+                .build();
+    }
+
+    public List<Endereco> paraListaEndereco(List<EnderecoDTO> enderecoDTOS) {
+        // Modo de converter os endereços SEM o stream() - modo mais "raiz"
+        List<Endereco> enderecos = new ArrayList<>();
+        for(EnderecoDTO enderecoDTO : enderecoDTOS) {
+            enderecos.add(paraEndereco(enderecoDTO));
+        }
+
+        return enderecos;
+
+        // Com o stream() - modo mais facilitado (e avançado)
+        //return enderecoDTOS.stream().map(this::paraEndereco).toList();
+    }
+
+    public Endereco paraEndereco(EnderecoDTO enderecoDTO) {
+        return Endereco.builder()
+                .rua(enderecoDTO.getRua())
+                .numero(enderecoDTO.getNumero())
+                .cidade(enderecoDTO.getCidade())
+                .complemento(enderecoDTO.getComplemento())
+                .cep(enderecoDTO.getCep())
+                .estado(enderecoDTO.getEstado())
+                .build();
+    }
+
+    public List<Telefone> paraListaTelefones(List<TelefoneDTO> telefoneDTOS) {
+        return telefoneDTOS.stream().map(this::paraTelefone).toList();
+    }
+
+    public Telefone paraTelefone(TelefoneDTO telefoneDTO) {
+        return Telefone.builder()
+                .numero(telefoneDTO.getNumero())
+                .ddd(telefoneDTO.getDdd())
+                .build();
+    }
+
+
+    //---------------------------------------------------------------
+
+    /************************************************************************************
+    * Esses métodos convertem objeto para objetoDTO
+    * Ou seja, recebem Usuario e convertem para UsuárioDTO
+    *
+    * Ignorar os nomes de alguns parâmetros de métodos e de for, tais como
+    * usuarioDTO, enderecoDTOS, telefoneDTOS
+    * Ficaram assim pois não ia afetar o comportamento da rotina (preguiça da instrutora)
+    * mas o ideal é que não tivessem o DTO no nome
+    * ***********************************************************************************
+    * */
+
+
+    public UsuarioDTO paraUsuarioDTO(Usuario usuarioDTO) {
+        /*
+        Sem o @Builder, o conversor ficaria mais ou menos assim:
+
+        Usuario usuario = new Usuario();
+        usuario.setEmail(usuarioDTO.getEmail());
+        usuario.setNome(usuarioDTO.getNome());
+        blá blá blá...
+        */
+
+        // Com o @Builder fica assim:
+        return UsuarioDTO.builder()
+                .nome(usuarioDTO.getNome())
+                .email(usuarioDTO.getEmail())
+                .senha(usuarioDTO.getSenha())
+                .enderecos(paraListaEnderecoDTO(usuarioDTO.getEnderecos()))
+                .telefones(paraListaTelefonesDTO(usuarioDTO.getTelefones()))
+                .build();
+    }
+
+    public List<EnderecoDTO> paraListaEnderecoDTO(List<Endereco> enderecoDTOS) {
+        // Modo de converter os endereços SEM o stream() - modo mais "raiz"
+        List<EnderecoDTO> enderecos = new ArrayList<>();
+        for(Endereco enderecoDTO : enderecoDTOS) {
+            enderecos.add(paraEnderecoDTO(enderecoDTO));
+        }
+
+        return enderecos;
+
+        // Com o stream() - modo mais facilitado (e avançado)
+        //return enderecoDTOS.stream().map(this::paraEndereco).toList();
+    }
+
+    public EnderecoDTO paraEnderecoDTO(Endereco enderecoDTO) {
+        return EnderecoDTO.builder()
+                .rua(enderecoDTO.getRua())
+                .numero(enderecoDTO.getNumero())
+                .cidade(enderecoDTO.getCidade())
+                .complemento(enderecoDTO.getComplemento())
+                .cep(enderecoDTO.getCep())
+                .estado(enderecoDTO.getEstado())
+                .build();
+    }
+
+    public List<TelefoneDTO> paraListaTelefonesDTO(List<Telefone> telefoneDTOS) {
+        return telefoneDTOS.stream().map(this::paraTelefoneDTO).toList();
+    }
+
+    public TelefoneDTO paraTelefoneDTO(Telefone telefoneDTO) {
+        return TelefoneDTO.builder()
+                .numero(telefoneDTO.getNumero())
+                .ddd(telefoneDTO.getDdd())
+                .build();
+    }
+
+}

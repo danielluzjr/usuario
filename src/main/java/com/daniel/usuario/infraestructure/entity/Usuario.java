@@ -1,10 +1,7 @@
 package com.daniel.usuario.infraestructure.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -19,7 +16,7 @@ import java.util.List;
 // As anotações abaixo fazem referência ao banco de dados:
 @Entity // Esta anotação significa que esta é uma tabela de banco de dados
 @Table(name = "usuario") // Esta anotação indica o nome da tabela (se não colocar, o Spring pega o nome da classe para se referir à tabela)
-
+@Builder
 public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Essa anotação significa que o Spring vai gerar automaticamente os IDs
